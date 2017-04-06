@@ -1,0 +1,18 @@
+{
+  "modules": [
+    {
+      "js3030-week1": "weeks1-2"
+    },
+    {
+      "js3030-week2": "weeks3-4"
+    },
+    {
+      "js3030-week3": "weeks5-6"
+    },
+    {
+      "js3030-week4": "weeks7-8"
+    }
+  ],
+  "preserveChanges": true,
+  "ua-uuid": "809fde94-4a5a-4c4d-8779-29a1d1867b06"
+}
