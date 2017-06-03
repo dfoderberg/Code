@@ -1,3 +1,4 @@
+// image search assignment
 /**
  * 
  * @file
@@ -20,9 +21,10 @@
  * forced to use sort through this organizational complexity as well.
  * 
  */
+const request = require("request");
 class ImageSearch {
     constructor() {
-        // this.network = require(''); // require the module needed to make requests
+         this.network = require('request'); // require the module needed to make requests
     }
 
     /**
@@ -73,7 +75,54 @@ class ImageSearch {
      * ID.  You should collect the largest available photo.
      */
     getFlickrPhoto(id) {
-        // TODO
+ return new Promise((resolve, reject) => {
+
+
+            var options = {
+                method: 'GET',
+                url: 'https://api.flickr.com/services/rest',
+                qs:
+                {
+                    method: 'flickr.photos.getSizes',
+                    api_key: 'd103d9be76c00510e3738c283338125e',
+                    photo_id: id,
+                    format: 'json',
+                    nojsoncallback: '?'
+                }
+            };
+
+            function callback(error, response, body) {
+                if (error) {
+                    console.log("error here");
+                    reject(error);
+                    return error;
+                }
+                let data = JSON.parse(body);
+                //console.log(data.sizes.size[1].width);
+                let width = 0;
+                // for(let image in data["sizes"]["size"])
+                for(let i = 0; i < data.sizes.size.length; i++){
+                   
+                    let int = parseInt(data.sizes.size[i].width);
+                    if (int > width){
+                        
+                        width = int;
+                        console.log(width + " is my new width");
+                    }
+                }
+                console.log(width + " this is my width");
+                for(let i = 0; i < data.sizes.size.length; i++){
+                    let int = parseInt(data.sizes.size[i].width);
+                    if (int == width){
+                        console.log(data.sizes.size[i].url);
+                        resolve(data.sizes.size[i].url);
+                    }  
+            }
+            //reject("no photo found");
+            resolve(body);
+            }
+            request(options, callback)   
+        })
     }
 
     /**
@@ -88,6 +137,7 @@ class ImageSearch {
      *      api_key=d103d9be76c00510e3738c283338125e
      *      text=waterfall
      *      nojsoncallback=1
+     * https://api.flickr.com/services/rest?api_key=d103d9be76c00510e3738c283338125e&text=waterfall&nojsoncallback=1&method=flickr.photos.search&format=json
      * 
      * https://www.flickr.com/services/api/flickr.photos.search.html
      * https://www.flickr.com/services/api/flickr.photos.getSizes.html
@@ -98,22 +148,57 @@ class ImageSearch {
      */
     search(keyword) {
         // this.network(SOME_URL, SOME_CALLBACK)
-        // TODO
+        return new Promise((resolve, reject) => {
+
+
+            var options = {
+                method: 'GET',
+                url: 'https://api.flickr.com/services/rest',
+                qs:
+                {
+                    method: 'flickr.photos.search',
+                    api_key: 'd103d9be76c00510e3738c283338125e',
+                    text: 'waterfall',
+                    format: 'json',
+                    nojsoncallback: '?'
+                }
+            };
+
+            function callback(error, response, body) {
+                if (error) {
+                    reject(error);
+                }
+                console.log(body);
+                resolve(JSON.parse(body));
+                
+            }
+
+            request(options, callback)
+        })
     }
 
-    /**
-     * Stores the file in the filesystem.  Uses synchronous functions.  Saves
-     * to a 'photos' directory.
-     * @param {String} filename The filename to use.
-     * @param {String} contents The contents of the file.
-     */
-    storeFile(filename, contents) {
-        if (!require('fs').existsSync(__dirname + '/photos')) {
-            require('fs').mkdirSync(__dirname + '/photos');
-        }
-        require('fs').writeFileSync(filename, 
-            contents, 'binary');
+
+
+
+
+/**
+ * Stores the file in the filesystem.  Uses synchronous functions.  Saves
+ * to a 'photos' directory.
+ * @param {String} filename The filename to use.
+ * @param {String} contents The contents of the file.
+ */
+storeFile(filename, contents) {
+    if (!require('fs').existsSync(__dirname + '/photos')) {
+        require('fs').mkdirSync(__dirname + '/photos');
     }
+    require('fs').writeFileSync(filename,
+        contents, 'binary');
 }
+}
+let images = new ImageSearch();
 
+//images.search("waterfall");
+//console.log("\n\n\n\n\n\n");
+images.getFlickrPhoto(33802530890);
 module.exports = ImageSearch;
+
